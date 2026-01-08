@@ -7,6 +7,7 @@ from openai import OpenAI
 from PIL.Image import Image
 from pydantic import BaseModel
 import pytesseract
+from pyzotero import zotero
 
 
 def extract_text(img: Image) -> str:
@@ -89,3 +90,39 @@ def find_citation(
     bibtex = response.choices[0].message.parsed
     assert bibtex is not None
     return bibtex
+
+
+def import_to_zotero() -> None:
+    load_dotenv()
+    z = zotero.Zotero(
+        library_id=os.environ["ZOTERO_USER_ID"],
+        library_type="user",
+        api_key=os.environ["ZOTERO_API_KEY"],
+    )
+
+    # Test item with correct creator format
+    result = z.create_items(
+        [
+            {
+                "itemType": "journalArticle",
+                "title": "XYZ XYZ XYZ",
+                "creators": [
+                    {
+                        "creatorType": "author",
+                        "firstName": "John",
+                        "lastName": "Doe",
+                    }
+                ],
+                "date": "1998",
+            }
+        ]
+    )
+
+    # Check result
+    print(f"Result: {result}")
+    if result.get("successful"):
+        print(f"Successfully added {len(result['successful'])} item(s)!")
+    if result.get("failed"):
+        print(f"Failed: {result.get('failed')}")
+    if result.get("unchanged"):
+        print(f"Unchanged: {result.get('unchanged')}")
