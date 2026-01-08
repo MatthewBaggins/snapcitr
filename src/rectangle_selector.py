@@ -104,10 +104,15 @@ class RectangleSelector:
         canvas.bind("<ButtonRelease-1>", on_release)
         self._root.bind("<Key>", on_key)
 
-        # Global hotkey listener for Alt alone
+        # Global hotkey listener for Alt alone and Escape
         def on_global_key_press(key: keyboard.Key | keyboard.KeyCode | None) -> None:
             if key == keyboard.Key.alt_l or key == keyboard.Key.alt_r:
                 self._alt_pressed_alone = True
+            elif key == keyboard.Key.esc:
+                # Escape always exits, even if overlay is hidden
+                self.selected = False
+                if self._root:
+                    self._root.after(0, self._root.quit)
 
         def on_global_key_release(key: keyboard.Key | keyboard.KeyCode | None) -> None:
             if key == keyboard.Key.alt_l or key == keyboard.Key.alt_r:
