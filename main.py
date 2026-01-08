@@ -1,7 +1,8 @@
 # main.py
 # Entry point for the snapshot application
 from src.rectangle_selector import RectangleSelector
-from src.processing import extract_text, find_citation, import_to_zotero
+from src.processing import extract_text, find_citation
+from src.import_to_zotero import import_to_zotero
 
 
 if __name__ == "__main__":
