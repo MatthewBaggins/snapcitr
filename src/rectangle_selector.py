@@ -1,7 +1,10 @@
+from datetime import datetime
 import os
+import time
+import tkinter as tk
 
 from PIL import ImageGrab
-import tkinter as tk
+from PIL.Image import Image
 
 
 class RectangleSelector:
@@ -79,17 +82,18 @@ class RectangleSelector:
 
     def capture_and_save(self) -> None:
         """Capture the selected region and save it"""
-        if not self.selected:
-            print("No region selected.")
-            return
-
-        bbox = self.get_coordinates()
-        snapshot = ImageGrab.grab(bbox=bbox)
-
-        # Save the snapshot with timestamp
-        from datetime import datetime
-
+        snapshot = self.capture_image()
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         save_path = os.path.join(os.getcwd(), f"snapshot_{timestamp}.png")
         snapshot.save(save_path)
         print(f"Snapshot saved at {save_path}")
+
+    def capture_image(self) -> Image | None:
+        if not self.selected:
+            print("No region selected.")
+            return
+
+        time.sleep(0.1)
+        bbox = self.get_coordinates()
+        snapshot = ImageGrab.grab(bbox=bbox)
+        return snapshot
