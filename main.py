@@ -1,7 +1,9 @@
 # main.py
 # Entry point for the snapshot application
+from pprint import pprint
 
 from src.rectangle_selector import RectangleSelector
+from src.processing import extract_text, find_citation
 
 
 if __name__ == "__main__":
@@ -10,4 +12,9 @@ if __name__ == "__main__":
 
     selector = RectangleSelector()
     selector.start_selection()
-    selector.capture_and_save()
+    img = selector.capture_image(strict=True)
+    selector.save(img)
+    text = extract_text(img)
+    citation = find_citation(text)
+    citation_formated = citation.format(with_cite_key=False)
+    print(citation_formated)

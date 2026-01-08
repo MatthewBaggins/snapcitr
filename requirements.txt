@@ -2,3 +2,4 @@ pytesseract
 pillow
 openai
 pydantic
+python-dotenv

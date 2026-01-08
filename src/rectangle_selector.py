@@ -2,6 +2,7 @@ from datetime import datetime
 import os
 import time
 import tkinter as tk
+import typing as typ
 
 from PIL import ImageGrab
 from PIL.Image import Image
@@ -80,15 +81,12 @@ class RectangleSelector:
         y2 = max(self.y1, self.y2)
         return (x1, y1, x2, y2)
 
-    def capture_and_save(self) -> None:
-        """Capture the selected region and save it"""
-        snapshot = self.capture_image()
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        save_path = os.path.join(os.getcwd(), f"snapshot_{timestamp}.png")
-        snapshot.save(save_path)
-        print(f"Snapshot saved at {save_path}")
+    @typ.overload
+    def capture_image(self, *, strict: typ.Literal[False]) -> Image | None: ...
+    @typ.overload
+    def capture_image(self, *, strict: typ.Literal[True]) -> Image: ...
 
-    def capture_image(self) -> Image | None:
+    def capture_image(self, *, strict: bool = False) -> Image | None:
         if not self.selected:
             print("No region selected.")
             return
@@ -96,4 +94,17 @@ class RectangleSelector:
         time.sleep(0.1)
         bbox = self.get_coordinates()
         snapshot = ImageGrab.grab(bbox=bbox)
+        if strict:
+            assert snapshot is not None
         return snapshot
+
+    def save(self, img: Image) -> None:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        save_path = os.path.join(os.getcwd(), f"snapshot_{timestamp}.png")
+        img.save(save_path)
+        print(f"Snapshot saved at {save_path}")
+
+    def capture_and_save(self) -> None:
+        """Capture the selected region and save it"""
+        img = self.capture_image(strict=True)
+        self.save(img)

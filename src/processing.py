@@ -2,6 +2,7 @@ from functools import lru_cache
 import os
 import typing as typ
 
+from dotenv import load_dotenv
 from openai import OpenAI
 from PIL.Image import Image
 from pydantic import BaseModel
@@ -9,12 +10,12 @@ import pytesseract
 
 
 def extract_text(img: Image) -> str:
-    text = pytesseract.image_to_string(img)
-    return text
+    return pytesseract.image_to_string(img)
 
 
 @lru_cache(maxsize=1)
 def get_openai_client() -> OpenAI:
+    load_dotenv()
     return OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 
 
@@ -34,6 +35,36 @@ class BibTeXEntry(BaseModel):
     doi: str | None = None
     url: str | None = None
 
+    def format(self, *, with_cite_key: bool = True) -> str:
+        """Format this BibTeX entry into a proper BibTeX string."""
+        lines = [
+            f"@{self.entry_type}{{{self.cite_key+"," if with_cite_key else ""}",
+            f"  author = {{{self.author}}},",
+            f"  title = {{{self.title}}},",
+            f"  year = {{{self.year}}},",
+        ]
+
+        # Optional fields
+        if self.journal:
+            lines.append(f"  journal = {{{self.journal}}},")
+        if self.booktitle:
+            lines.append(f"  booktitle = {{{self.booktitle}}},")
+        if self.publisher:
+            lines.append(f"  publisher = {{{self.publisher}}},")
+        if self.volume:
+            lines.append(f"  volume = {{{self.volume}}},")
+        if self.number:
+            lines.append(f"  number = {{{self.number}}},")
+        if self.pages:
+            lines.append(f"  pages = {{{self.pages}}},")
+        if self.doi:
+            lines.append(f"  doi = {{{self.doi}}},")
+        if self.url:
+            lines.append(f"  url = {{{self.url}}},")
+
+        lines.append("}")
+        return "\n".join(lines)
+
 
 CitationFormat = typ.Literal["BibTeX"]
 
@@ -41,6 +72,8 @@ CitationFormat = typ.Literal["BibTeX"]
 def find_citation(
     citation_text: str, *, format: CitationFormat = "BibTeX"
 ) -> BibTeXEntry:
+    # for later improvements/generalizations
+    assert format == "BibTeX", f"{format = !r}"
     client = get_openai_client()
     response = client.beta.chat.completions.parse(
         model="gpt-4o-2024-08-06",
