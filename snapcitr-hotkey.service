@@ -4,10 +4,10 @@ After=graphical.target
 
 [Service]
 Type=simple
-ExecStart=/home/matthewbaggins/code/snapcitr/.venv/bin/python /home/matthewbaggins/code/snapcitr/hotkey_listener.py
+ExecStart=REPO_PATH/.venv/bin/python REPO_PATH/hotkey_listener.py
 Restart=on-failure
 Environment="DISPLAY=:0"
-Environment="XAUTHORITY=/home/matthewbaggins/.Xauthority"
+Environment="XAUTHORITY=%h/.Xauthority"
 
 [Install]
 WantedBy=default.target

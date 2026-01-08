@@ -78,7 +78,7 @@ brew install tesseract
 
 ### Python Setup
 
-1. Clone/navigate to the repository:
+1. Clone/navigate to the repository.
 
 2. Create virtual environment:
 
@@ -117,13 +117,13 @@ ZOTERO_API_KEY=your_zotero_api_key_here
 
 ### Hotkey Service Management
 
-Status:
+Check status:
 
 ```bash
 systemctl --user status snapcitr-hotkey
 ```
 
-Stop:
+Stop (kill the service):
 
 ```bash
 systemctl --user stop snapcitr-hotkey
@@ -135,13 +135,25 @@ Start:
 systemctl --user start snapcitr-hotkey
 ```
 
-Restart:
+Restart (after code changes):
 
 ```bash
 systemctl --user restart snapcitr-hotkey
 ```
 
-Logs:
+Disable auto-start on login:
+
+```bash
+systemctl --user disable snapcitr-hotkey
+```
+
+Re-enable auto-start:
+
+```bash
+systemctl --user enable snapcitr-hotkey
+```
+
+View real-time logs:
 
 ```bash
 journalctl --user -u snapcitr-hotkey -f

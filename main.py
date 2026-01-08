@@ -15,6 +15,7 @@ if __name__ == "__main__":
     logger.info("Log file: %s", log_file)
 
     citation_count = 0
+
     while True:
         logger.info("Ready for next citation")
 

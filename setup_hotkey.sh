@@ -12,8 +12,8 @@ echo "Setting up snapcitr hotkey listener..."
 # Create user systemd directory if it doesn't exist
 mkdir -p "$HOME/.config/systemd/user"
 
-# Copy service file and update paths
-sed "s|/home/matthewbaggins|$HOME|g" "${SCRIPT_DIR}/snapcitr-hotkey.service" > "$SERVICE_FILE"
+# Copy service file and substitute repo path
+sed "s|REPO_PATH|${SCRIPT_DIR}|g" "${SCRIPT_DIR}/snapcitr-hotkey.service" > "$SERVICE_FILE"
 
 # Reload systemd
 systemctl --user daemon-reload
