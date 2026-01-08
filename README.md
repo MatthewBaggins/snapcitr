@@ -2,6 +2,8 @@
 
 A desktop application for capturing text from screen screenshots and automatically extracting bibliographic citations to add to Zotero.
 
+(*Caveat utor et contributor: Much (most, counting by the number of lines) of this code was written by Claude Sonnet 4.5 and Opus 4.5.*)
+
 ## Usage
 
 (Once everything is set up, see later in this section.)
