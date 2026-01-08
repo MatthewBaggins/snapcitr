@@ -4,11 +4,11 @@ A desktop application for capturing text from screen screenshots and automatical
 
 ## Usage
 
-(Once everything is setup, see later in this section.)
+(Once everything is set up, see later in this section.)
 
 - Press `Ctrl-Left + PrintScreen` to enter the selection mode and `Escape` to exit.
 - While in selection mode, press `Alt-Left` to (de)activate the selection overlay.
-- With activated selection overlay, click and drag a rectangle to select a text with citation.
+- With activated selection overlay, click and drag a rectangle to select a text with a citation.
 - Having selected a proper citation, the text will be extracted (using Tesseract), processed to BibTeX (using OpenAI API), and imported to Zotero.
 - The app is then ready for extracting the next citation.
 
@@ -21,7 +21,7 @@ Putting all the keyboard controls in one neat table:
 | Key | Action |
 |-----|--------|
 | `Ctrl + PrintScreen` | Launch snapshot app (when service is running) |
-| `Click + Drag` | Select rectangle area |
+| Click + Drag | Select rectangle area |
 | `Alt` | Toggle overlay visibility (hide to interact with windows) |
 | `Escape` | Exit selection mode and close app |
 
@@ -179,7 +179,7 @@ Supports 14 BibTeX entry types:
 - `book` - Published book
 - `booklet` - Unpublished bound work
 - `conference` / `inproceedings` - Conference paper
-- `incollection` - Part of edited book
+- `incollection` - Part of an edited book
 - `inbook` - Chapter in book
 - `manual` - Technical documentation
 - `mastersthesis` / `phdthesis` - Academic thesis
@@ -206,7 +206,7 @@ Hotkey service logs: `journalctl --user -u snapcitr-hotkey -f`
 
 ### Hotkey not working
 
-Check if service is running:
+Check if the service is running:
 
 ```bash
 systemctl --user status snapcitr-hotkey
@@ -226,7 +226,7 @@ systemctl --user restart snapcitr-hotkey
 
 ### "ModuleNotFoundError: No module named 'pynput'"
 
-Service is using wrong Python. Reinstall with:
+Service is using a wrong Python. Reinstall with:
 
 ```bash
 ./setup_hotkey.sh
