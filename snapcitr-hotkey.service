@@ -1,0 +1,13 @@
+[Unit]
+Description=Snapcitr Global Hotkey Listener
+After=graphical.target
+
+[Service]
+Type=simple
+ExecStart=/home/matthewbaggins/code/snapcitr/.venv/bin/python /home/matthewbaggins/code/snapcitr/hotkey_listener.py
+Restart=on-failure
+Environment="DISPLAY=:0"
+Environment="XAUTHORITY=/home/matthewbaggins/.Xauthority"
+
+[Install]
+WantedBy=default.target

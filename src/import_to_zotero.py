@@ -38,39 +38,13 @@ def import_to_zotero(bibtex: BibTeXEntry) -> None:
     # Parse creators (authors and editors)
     creators = []
 
-    def parse_person(name: str, creator_type: str) -> dict[str, str]:
-        name = name.strip()
-        if "," in name:
-            # Last, First format
-            assert name.count(",") == 1, f"{name = !r} ({name.count(',')}>1 commas)"
-            last_name, first_name = name.split(",", 1)
-            return {
-                "creatorType": creator_type,
-                "lastName": last_name,
-                "firstName": first_name,
-            }
-        else:
-            # First Last format - split on last space
-            parts = name.rsplit(" ", 1)
-            if len(parts) == 2:
-                return {
-                    "creatorType": creator_type,
-                    "firstName": parts[0].strip(),
-                    "lastName": parts[1].strip(),
-                }
-            else:
-                return {
-                    "creatorType": creator_type,
-                    "lastName": name,
-                }
-
     if bibtex.author:
         for author in bibtex.author.split(" and "):
-            creators.append(parse_person(author, "author"))
+            creators.extend(_parse_multiple_authors(author, "author"))
 
     if bibtex.editor:
         for editor in bibtex.editor.split(" and "):
-            creators.append(parse_person(editor, "editor"))
+            creators.extend(_parse_multiple_authors(editor, "editor"))
 
     # Build item
     item: dict[str, typ.Any] = {
@@ -164,10 +138,72 @@ def import_to_zotero(bibtex: BibTeXEntry) -> None:
     result = z.create_items([item])
 
     # Check result
-    print(f"Result: {result}")
+    # print(f"Result: {result}")
     if result.get("successful"):
         print(f"Successfully added {len(result['successful'])} item(s)!")
     if result.get("failed"):
         print(f"Failed: {result.get('failed')}")
     if result.get("unchanged"):
         print(f"Unchanged: {result.get('unchanged')}")
+
+
+def _parse_multiple_authors(
+    author_string: str, creator_type: str
+) -> list[dict[str, str]]:
+    """Parse author string that may contain multiple authors separated by commas or 'and'."""
+    result = []
+
+    # If there are multiple commas, likely "Author1, Author2, Author3" format
+    if author_string.count(",") > 1:
+        # Split by comma and treat each as a separate author
+        for author in author_string.split(","):
+            author = author.strip()
+            if author:
+                # Each author is in "First Last" format (no comma within)
+                parts = author.rsplit(" ", 1)
+                if len(parts) == 2:
+                    result.append(
+                        {
+                            "creatorType": creator_type,
+                            "firstName": parts[0].strip(),
+                            "lastName": parts[1].strip(),
+                        }
+                    )
+                else:
+                    result.append(
+                        {
+                            "creatorType": creator_type,
+                            "lastName": author,
+                        }
+                    )
+    else:
+        # Single author, parse normally
+        result.append(_parse_person(author_string, creator_type))
+
+    return result
+
+
+def _parse_person(name: str, creator_type: str) -> dict[str, str]:
+    name = name.strip()
+    if "," in name:
+        # Last, First format
+        parts = name.split(",", 1)
+        return {
+            "creatorType": creator_type,
+            "lastName": parts[0].strip(),
+            "firstName": parts[1].strip(),
+        }
+    else:
+        # First Last format - split on last space
+        parts = name.rsplit(" ", 1)
+        if len(parts) == 2:
+            return {
+                "creatorType": creator_type,
+                "firstName": parts[0].strip(),
+                "lastName": parts[1].strip(),
+            }
+        else:
+            return {
+                "creatorType": creator_type,
+                "lastName": name,
+            }

@@ -7,15 +7,22 @@ from src.import_to_zotero import import_to_zotero
 
 if __name__ == "__main__":
     print("Snapshot application initialized.")
-    print("Click and drag to select the area you want to capture...")
+    print("Press Alt to hide/show overlay | Esc to finish")
 
-    selector = RectangleSelector()
-    selector.start_selection()
-    img = selector.capture_image(strict=True)
-    selector.save(img)
-    text = extract_text(img)
-    print(f"{text = !r}")
-    citation = find_citation(text)
-    citation_formated = citation.format(with_cite_key=False)
-    print(citation_formated)
-    import_to_zotero(citation)
+    while True:
+        print("\n--- Ready for next citation ---")
+
+        selector = RectangleSelector()
+        selector.start_selection()
+
+        # Check if user cancelled (pressed Escape)
+        if not selector.selected:
+            print("Exiting...")
+            break
+
+        img = selector.capture_image(strict=True)
+        text = extract_text(img)
+        print(f"{text = !r}")
+        citation = find_citation(text)
+        print(citation.format(with_cite_key=False))
+        import_to_zotero(citation)
