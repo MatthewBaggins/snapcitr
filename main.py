@@ -2,17 +2,17 @@
 # Entry point for the snapshot application
 from pathlib import Path
 
-from src.rectangle_selector import RectangleSelector
-from src.processing import extract_text, find_citation
 from src.import_to_zotero import import_to_zotero
+from src.processing import extract_text, find_citation
+from src.rectangle_selector import RectangleSelector
 from src.utils import get_logger
 
 if __name__ == "__main__":
-    log_file = Path(__file__).parent / "logs"
-    logger = get_logger(log_file)
+    logs_dir = Path(__file__).parent / "logs"
+    logger = get_logger(logs_dir)
     logger.info("=" * 60)
     logger.info("Snapshot application started")
-    logger.info("Log file: %s", log_file)
+    logger.info("Log file: %s", logs_dir)
 
     citation_count = 0
 
