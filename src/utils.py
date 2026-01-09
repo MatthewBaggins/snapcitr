@@ -14,7 +14,7 @@ def get_openai_client() -> OpenAI:
 
 
 @lru_cache(maxsize=1)
-def get_logger(logs_dir: Path) -> logging.Logger:
+def get_logger(logs_dir: Path, logger_name: str) -> logging.Logger:
     # Setup logging
     logs_dir.mkdir(parents=True, exist_ok=True)
     log_file = logs_dir / "snapcitr.log"
@@ -25,4 +25,4 @@ def get_logger(logs_dir: Path) -> logging.Logger:
         handlers=[logging.FileHandler(log_file), logging.StreamHandler()],
     )
 
-    return logging.getLogger(__name__)
+    return logging.getLogger(logger_name)

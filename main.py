@@ -1,5 +1,3 @@
-# main.py
-# Entry point for the snapshot application
 from pathlib import Path
 
 from src.import_to_zotero import import_to_zotero
@@ -9,7 +7,7 @@ from src.utils import get_logger
 
 if __name__ == "__main__":
     logs_dir = Path(__file__).parent / "logs"
-    logger = get_logger(logs_dir)
+    logger = get_logger(logs_dir=logs_dir, logger_name=__name__)
     logger.info("=" * 60)
     logger.info("Snapshot application started")
     logger.info("Log file: %s", logs_dir)
