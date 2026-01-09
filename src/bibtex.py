@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as typ
 
 from pydantic import BaseModel, model_validator
@@ -81,12 +83,12 @@ class BibTeXEntry(BaseModel):
     month: str | None = None
     note: str | None = None
     howpublished: str | None = None
-    type_field: str | None = None  # 'type' in BibTeX (e.g., "PhD dissertation")
+    type: str | None = None
     abstract: str | None = None
     keywords: str | None = None
 
     @model_validator(mode="after")
-    def validate_required_fields(self) -> "BibTeXEntry":
+    def validate_required_fields(self) -> BibTeXEntry:
         entry_type = self.entry_type.lower()
         required = REQUIRED_FIELDS.get(entry_type, [])
         missing = []
@@ -112,61 +114,10 @@ class BibTeXEntry(BaseModel):
             f"@{self.entry_type}{{{self.cite_key + ',' if with_cite_key else ''}",
         ]
 
-        # Add non-None fields
-        if self.author:
-            lines.append(f"  author = {{{self.author}}},")
-        if self.editor:
-            lines.append(f"  editor = {{{self.editor}}},")
-        if self.title:
-            lines.append(f"  title = {{{self.title}}},")
-        if self.year:
-            lines.append(f"  year = {{{self.year}}},")
-        if self.journal:
-            lines.append(f"  journal = {{{self.journal}}},")
-        if self.booktitle:
-            lines.append(f"  booktitle = {{{self.booktitle}}},")
-        if self.publisher:
-            lines.append(f"  publisher = {{{self.publisher}}},")
-        if self.school:
-            lines.append(f"  school = {{{self.school}}},")
-        if self.institution:
-            lines.append(f"  institution = {{{self.institution}}},")
-        if self.organization:
-            lines.append(f"  organization = {{{self.organization}}},")
-        if self.volume:
-            lines.append(f"  volume = {{{self.volume}}},")
-        if self.number:
-            lines.append(f"  number = {{{self.number}}},")
-        if self.pages:
-            lines.append(f"  pages = {{{self.pages}}},")
-        if self.chapter:
-            lines.append(f"  chapter = {{{self.chapter}}},")
-        if self.series:
-            lines.append(f"  series = {{{self.series}}},")
-        if self.edition:
-            lines.append(f"  edition = {{{self.edition}}},")
-        if self.doi:
-            lines.append(f"  doi = {{{self.doi}}},")
-        if self.url:
-            lines.append(f"  url = {{{self.url}}},")
-        if self.isbn:
-            lines.append(f"  isbn = {{{self.isbn}}},")
-        if self.issn:
-            lines.append(f"  issn = {{{self.issn}}},")
-        if self.address:
-            lines.append(f"  address = {{{self.address}}},")
-        if self.month:
-            lines.append(f"  month = {{{self.month}}},")
-        if self.note:
-            lines.append(f"  note = {{{self.note}}},")
-        if self.howpublished:
-            lines.append(f"  howpublished = {{{self.howpublished}}},")
-        if self.type_field:
-            lines.append(f"  type = {{{self.type_field}}},")
-        if self.abstract:
-            lines.append(f"  abstract = {{{self.abstract}}},")
-        if self.keywords:
-            lines.append(f"  keywords = {{{self.keywords}}},")
+        schema = BibTeXEntry.model_json_schema()
+        for p in schema["properties"]:
+            if p not in schema["required"] and getattr(self, p) is not None:
+                lines.append(f"  {p} = {{{getattr(self, p)}}},")
 
         lines.append("}")
         return "\n".join(lines)

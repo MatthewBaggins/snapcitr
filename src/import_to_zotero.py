@@ -102,11 +102,11 @@ def import_to_zotero(bibtex: BibTeXEntry) -> None:
         item["ISSN"] = bibtex.issn
 
     # Thesis/report type
-    if bibtex.type_field:
+    if bibtex.type:
         if item_type == "thesis":
-            item["thesisType"] = bibtex.type_field
+            item["thesisType"] = bibtex.type
         elif item_type == "report":
-            item["reportType"] = bibtex.type_field
+            item["reportType"] = bibtex.type
     elif item_type == "thesis":
         # Default thesis types based on entry_type
         if bibtex.entry_type.lower() == "phdthesis":
