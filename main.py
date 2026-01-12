@@ -8,14 +8,13 @@ from src.utils import get_logger
 if __name__ == "__main__":
     logs_dir = Path(__file__).parent / "logs"
     logger = get_logger(logs_dir=logs_dir, logger_name=__name__)
-    logger.info("=" * 60)
-    logger.info("Snapshot application started")
+    logger.info("snapcitr started")
     logger.info("Log file: %s", logs_dir)
 
     citation_count = 0
 
     while True:
-        logger.info("Ready for next citation")
+        logger.info("Ready to process next citation snapshot")
 
         try:
             selector = RectangleSelector()
@@ -34,7 +33,9 @@ if __name__ == "__main__":
             logger.info("Extracted text (%d chars): %s...", len(text), text[:100])
 
             citation = find_citation(text)
-            logger.info("Citation found: %s - %s", citation.entry_type, citation.title)
+            logger.info(
+                "Citation prrocessed: %s - %s", citation.entry_type, citation.title
+            )
             citation_formatted = citation.format(with_cite_key=False)
             logger.info("Formatted citation:\n%s", citation_formatted)
 
@@ -45,5 +46,4 @@ if __name__ == "__main__":
         except Exception as e:
             logger.error("Error processing citation: %s", e, exc_info=True)
 
-    logger.info("Snapshot application closed")
-    logger.info("=" * 60)
+    logger.info("snapcitr closed")
